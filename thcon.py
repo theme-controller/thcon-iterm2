@@ -1,21 +1,11 @@
 #!/usr/bin/env python3
 import asyncio
 import json
-import os
-from pathlib import Path
-import signal
 import iterm2
+import time
+import sys
 
 __DEBUG = True
-
-pipe_dir = Path(Path.home(), Path(".local/share/thcon"))
-pipe_dir.mkdir(parents=True, exist_ok=True)
-pipe_path = Path(pipe_dir, "iterm2")
-os.mkfifo(pipe_path, mode=0o700)
-
-on_exit = lambda sig, stack: pipe_path.unlink(missing_ok=True)
-signal.signal(signal.SIGTERM, on_exit)
-signal.signal(signal.SIGHUP, on_exit)
 
 async def try_set_profile(connection, app, payload):
     if not "profile" in payload:
@@ -45,18 +35,25 @@ async def try_set_profile(connection, app, payload):
 async def main(connection):
     app = await iterm2.async_get_app(connection)
 
+    argv = ["/Users/sean/src/thcon/target/debug/thcon-listen", "iterm2"]
+    if __DEBUG:
+        argv.append("--verbose")
+
+    stderr_pipe = asyncio.subprocess.STDOUT if __DEBUG else None
+    proc = await asyncio.create_subprocess_exec(*argv,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=stderr_pipe,
+    )
+
     while True:
-        try:
-            # block until pipe is readable
-            with open(pipe_path, mode="r", encoding="utf8") as pipe:
-                for line in pipe:
-                    if __DEBUG:
-                        print("received line from pipe: ", line.strip())
-                    payload = json.loads(line)
-                    if __DEBUG:
-                        print("as json: ", payload)
-                    await try_set_profile(connection, app, payload)
-        except (FileNotFoundError, json.JSONDecodeError):
-            pass
+        line = await proc.stdout.readline()
+        if line.strip():
+            try:
+                payload = json.loads(line)
+                await try_set_profile(connection, app, payload)
+            except json.JSONDecodeError:
+                print("[dbg]", line.strip().decode(sys.stdout.encoding))
+        else:
+            break
 
 iterm2.run_forever(main)
