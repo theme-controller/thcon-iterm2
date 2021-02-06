@@ -8,9 +8,9 @@ import iterm2
 
 __DEBUG = True
 
-pipe_dir = Path(Path.home(), Path(".local/share/thcon/iterm2"))
+pipe_dir = Path(Path.home(), Path(".local/share/thcon"))
 pipe_dir.mkdir(parents=True, exist_ok=True)
-pipe_path = Path(pipe_dir, str(os.getpid()))
+pipe_path = Path(pipe_dir, "iterm2")
 os.mkfifo(pipe_path, mode=0o700)
 
 on_exit = lambda sig, stack: pipe_path.unlink(missing_ok=True)
@@ -19,6 +19,7 @@ signal.signal(signal.SIGHUP, on_exit)
 
 async def try_set_profile(connection, app, payload):
     if not "profile" in payload:
+        print("Couldn't find 'profile' property in payload: ", payload)
         return
 
     profiles = await iterm2.PartialProfile.async_query(connection)
