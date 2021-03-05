@@ -1,0 +1,16 @@
+{
+    "title": "thcon-iterm2 payload",
+    "description": "Interface for interacting with thcon-iterm2 via thcon-listen",
+    "type": "object",
+    "properties": {
+        "profile": {
+            "type": "string",
+            "$comment": "The user-friendly name of the profile to switch to"
+        }
+    },
+    "examples": [
+        { "colorscheme": "Default" },
+        { "colorscheme": "solarized light" },
+        { "colorscheme": "my custom theme" }
+    ]
+}
