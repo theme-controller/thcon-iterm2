@@ -46,7 +46,7 @@ async def try_set_profile(connection, app, payload):
 async def main(connection):
     app = await iterm2.async_get_app(connection)
 
-    argv = ["/Users/sean/src/thcon/target/debug/thcon-listen", "iterm2"]
+    argv = ["~/.cargo/bin/thcon-listen", "iterm2"]
     if __DEBUG:
         argv.append("--verbose")
 
