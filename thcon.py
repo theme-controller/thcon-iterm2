@@ -4,7 +4,7 @@ import json
 import iterm2
 import sys
 
-__DEBUG = True
+__DEBUG = False
 
 async def try_set_profile(connection, app, payload):
     """
