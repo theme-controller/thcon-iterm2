@@ -51,7 +51,7 @@ async def main(connection):
         argv.append("--verbose")
 
     stderr_pipe = asyncio.subprocess.STDOUT if __DEBUG else None
-    proc = await asyncio.create_subprocess_exec(*argv,
+    proc = await asyncio.create_subprocess_shell(" ".join(argv),
             stdout=asyncio.subprocess.PIPE,
             stderr=stderr_pipe,
     )
