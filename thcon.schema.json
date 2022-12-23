@@ -9,8 +9,8 @@
         }
     },
     "examples": [
-        { "colorscheme": "Default" },
-        { "colorscheme": "solarized light" },
-        { "colorscheme": "my custom theme" }
+        { "profile": "Default" },
+        { "profile": "solarized light" },
+        { "profile": "my custom theme" }
     ]
 }
