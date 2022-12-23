@@ -3,6 +3,11 @@ import asyncio
 import json
 import iterm2
 import sys
+import os
+
+# If thcon was installed someplace non-standard, feel free to change
+# this to the path to that file.
+__THCON_BIN = "~/bin/thcon"
 
 __DEBUG = False
 
@@ -46,7 +51,7 @@ async def try_set_profile(connection, app, payload):
 async def main(connection):
     app = await iterm2.async_get_app(connection)
 
-    argv = ["~/.cargo/bin/thcon-listen", "iterm2"]
+    argv = [__THCON_BIN, "listen", "iterm2"]
     if __DEBUG:
         argv.append("--verbose")
 
